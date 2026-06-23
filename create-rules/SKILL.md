@@ -9,7 +9,7 @@ description: >-
 license: MIT
 metadata:
   author: zeroanonx
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # Create AI Coding Rules
@@ -85,27 +85,31 @@ metadata:
 - `package.json` 中的 `stylelint` 字段
 - `package.json` scripts 中包含 `stylelint`
 
-发现 stylelint 后，必须继续读取并提取这些信息：
+发现 stylelint 后，必须继续读取并提取这些信息，但生成到 rules 时只保留必要结论：
 
 - stylelint 配置文件内容。
 - `package.json` 中可运行的 stylelint / lint:style / lint 脚本。
 - `order/properties-order` 的属性顺序规则。
 - `no-descending-specificity` 等选择器顺序规则。
-- 项目中 2-3 个已通过 lint 的样式文件，作为选择器组织和属性排序参考。
+- 1-2 个已通过 lint 的同类样式文件，作为排序参考。
 
-生成 rules 时不能只写“遵守 stylelint”，必须写入具体执行门禁：
+Stylelint 规则要强，但产出要短。生成 rules 时不要写大段解释，只写这三类可执行内容：
 
-```markdown
-任何新增或修改的样式代码都必须通过项目 stylelint。样式规则以项目 stylelint 配置为最高优先级，不得生成与 stylelint 冲突的 CSS、LESS、SCSS 或 PostCSS 写法。
+1. 真实校验命令。
+2. 必须修复到 `0 error` 才能交付。
+3. 常见错误处理。
 
-修改样式代码后必须运行项目 stylelint 命令；如果 stylelint 报错，必须修复到 0 error 后才能结束任务。禁止在仍存在 stylelint error 时交付。
-```
-
-如果能从 `package.json` 识别出具体命令，rules 中必须写入真实命令，例如：
+推荐写成：
 
 ```markdown
-样式校验命令：
-pnpm lint:style
+样式校验命令：pnpm lint:style
+
+修改 CSS / LESS / SCSS 后必须运行样式校验，并修复到 0 error 后再交付。
+
+常见错误处理：
+- `order/properties-order`：按项目配置顺序重排属性。
+- `no-descending-specificity`：调整选择器顺序，低特异性选择器放在高特异性选择器之前。
+- 避免在文件末尾追加重复或倒序选择器，优先在原选择器块内修改。
 ```
 
 如无法识别脚本，rules 中必须要求 agent 先询问用户或说明无法验证，不得假装已通过。
@@ -116,12 +120,7 @@ pnpm lint:style
 - 修改旧代码时只修正本次涉及范围。
 - 不为了通过 stylelint 大规模重排无关样式文件。
 
-生成 rules 时必须特别覆盖这些高频错误：
-
-- `order/properties-order`：属性必须按项目配置顺序书写，不能靠猜测排序。
-- `no-descending-specificity`：低特异性选择器必须出现在高特异性选择器之前；新增选择器前必须检查同文件已有选择器顺序。
-- 嵌套选择器：避免在后面新增更低特异性的通用选择器，如 `span`、`.icon`、`.title`，导致和前面的高特异性选择器冲突。
-- 修改 SCSS/LESS 时，应优先在原有选择器块内补充属性，避免在文件后部新增重复或倒序选择器。
+不要把 stylelint 配置原文完整搬进 rules；只保留 AI 写代码时必须执行的校验命令和高频错误处理方式。
 
 ## 项目结构与文件用途树
 
@@ -199,6 +198,8 @@ src/
 - `globs` 尽量精准；只有全局规则才使用 `"**/*"`。
 - `alwaysApply: true` 只用于所有任务都必须加载的规则。
 - 内容应面向 AI 执行，使用明确的“必须 / 禁止 / 优先”规则。
+- rules 优先短、准、可执行；不要写成完整规范文档。
+- 少写背景解释，多写命令、约束、目录位置和禁止事项。
 
 ```markdown
 ---
@@ -294,7 +295,21 @@ alwaysApply: false
 
 ## 质量标准
 
-规则必须具体、可执行、基于项目证据。
+规则必须具体、可执行、基于项目证据，并保持足够精简。
+
+生成 rules 时优先写：
+
+- AI 修改代码前必须看的项目事实。
+- AI 生成代码时必须遵守的约束。
+- 可直接运行的校验命令。
+- 常见错误的修复方式。
+
+生成 rules 时不要写：
+
+- 大段背景解释。
+- 完整规范手册。
+- 和代码生成无关的项目介绍。
+- 已经能从配置文件自动推断的细节全文。
 
 避免：
 

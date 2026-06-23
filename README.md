@@ -157,27 +157,26 @@ skill 会优先读取这些项目证据：
 
 ## Stylelint 强制规则
 
-如果项目存在 stylelint，生成的规则会明确要求：
+如果项目存在 stylelint，生成的规则会保持简短，但约束会很硬：
 
 ```markdown
-任何新增或修改的样式代码都必须通过项目 stylelint。样式规则以项目 stylelint 配置为最高优先级，不得生成与 stylelint 冲突的 CSS、LESS、SCSS 或 PostCSS 写法。
+样式校验命令：pnpm lint:style
 
-修改样式代码后必须运行项目 stylelint 命令；如果 stylelint 报错，必须修复到 0 error 后才能结束任务。禁止在仍存在 stylelint error 时交付。
+修改 CSS / LESS / SCSS 后必须运行样式校验，并修复到 0 error 后再交付。
+
+常见错误处理：
+- `order/properties-order`：按项目配置顺序重排属性。
+- `no-descending-specificity`：调整选择器顺序，低特异性选择器放在高特异性选择器之前。
+- 避免在文件末尾追加重复或倒序选择器，优先在原选择器块内修改。
 ```
 
-如果项目能识别出 `lint:style`、`stylelint` 等脚本，生成的 rules 会写入真实校验命令，例如 `pnpm lint:style`、`npm run lint:style` 或项目自己的样式校验命令。
+如果项目能识别出 `lint:style`、`stylelint` 等脚本，生成的 rules 会写入真实校验命令，例如 `pnpm lint:style`、`npm run lint:style` 或项目自己的样式校验命令。不会把 stylelint 配置原文完整搬进 rules。
 
 如果旧代码和 stylelint 存在冲突，规则会要求：
 
 - 新代码遵守 stylelint。
 - 修改旧代码时只处理本次涉及范围。
 - 不为了 stylelint 大规模重排无关样式文件。
-
-同时会特别约束常见 stylelint 错误：
-
-- `order/properties-order`：属性必须按项目配置顺序书写。
-- `no-descending-specificity`：低特异性选择器必须出现在高特异性选择器之前。
-- 修改 SCSS/LESS 时优先在原有选择器块内补充属性，避免在文件后部新增重复或倒序选择器。
 
 ## 规则优先级
 
@@ -213,6 +212,8 @@ create-rules/
 ## 质量标准
 
 生成的规则必须具体、可执行、基于项目证据。
+
+rules 优先短、准、可执行。它不是完整规范文档，不会把项目背景、配置全文或通用最佳实践大段铺开。
 
 避免：
 
