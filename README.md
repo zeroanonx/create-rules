@@ -1,4 +1,4 @@
-# Create Cursor Rules
+# Create Rules
 
 一个用于维护老项目的 Agent Skill。它会先阅读项目真实代码和配置，提炼项目已有的工程规范，然后生成可被 AI 编码工具长期遵守的规则文件。
 
@@ -97,13 +97,13 @@ src/
 使用 `skills` CLI 从 GitHub 安装：
 
 ```bash
-npx skills add https://github.com/zeroanonx/create-rules --skill create-cursor-rules
+npx skills add https://github.com/zeroanonx/create-rules --skill create-rules
 ```
 
 也可以使用 GitHub 简写：
 
 ```bash
-npx skills add zeroanonx/create-rules --skill create-cursor-rules
+npx skills add zeroanonx/create-rules --skill create-rules
 ```
 
 如果只想确认仓库里有哪些 skill：
@@ -119,7 +119,7 @@ npx skills add https://github.com/zeroanonx/create-rules --list
 在需要生成规则的老项目中，对 Agent 说：
 
 ```text
-使用 create-cursor-rules 分析这个项目，并生成 AI 编码规则。
+使用 create-rules 分析这个项目，并生成 AI 编码规则。
 ```
 
 Agent 会先分析项目，不会立刻写入最终规则。一切准备完成后，它必须先让你选择目标 AI：

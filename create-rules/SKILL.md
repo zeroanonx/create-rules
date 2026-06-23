@@ -1,5 +1,5 @@
 ---
-name: create-cursor-rules
+name: create-rules
 description: >-
   分析老项目的技术栈、目录结构、代码风格、Lint 配置和团队约定，
   在用户选择 cursor、codex 或 claude 后，生成对应的 AI 编码规则文件：
